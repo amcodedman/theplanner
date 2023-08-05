@@ -341,7 +341,7 @@ routers.route("/userresetpass/:id").patch(async (req, res) => {
 });
 
 
-routers.route("/invitefriend").push(async (req, res) => {
+routers.route("/invitefriend").post(async (req, res) => {
   try {
     const from = req.body.from;
     const to = req.body.to;

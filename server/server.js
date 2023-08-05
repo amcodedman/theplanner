@@ -4,11 +4,10 @@ const app=express()
 require("dotenv").config()
 const bodyParser=require("body-parser")
 const cookieParser=require("cookie-parser")
-const PORT=process.env.PORT ||3003
+const PORT=process.env.PORT || 3003
 const path=require("path")
 var cors = require('cors')
-const MongoUrl=`mongodb+srv://timenudgemcommunity:${process.env.DB_PASS}@timenudge.ypp9h2p.mongodb.net/`
-
+const MongoUrl=`mongodb+srv://myplannercommunity:${process.env.DB_PASS}@myplann.txqlcge.mongodb.net/?retryWrites=true&w=majority`
 
 const Admin=require("./routers/Admin")
 
