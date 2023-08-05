@@ -83,7 +83,10 @@ const oneTimeshedule_schema = mongoose.Schema(
     title: {
       type: String,
     },
-    date: {
+    description: {
+      type: String,
+    },
+    type: {
       type: String,
     },
     from: {
@@ -185,10 +188,10 @@ const InviteSchema = mongoose.Schema(
     },
 
     to: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
-    confirm:{
-      type:Boolean,
+    confirm: {
+      type: Boolean,
       default: false,
-    }
+    },
   },
   { timestamps: true }
 );

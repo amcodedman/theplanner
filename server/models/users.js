@@ -24,9 +24,12 @@ password:{
     type: String,
     default:"string"
 },
+username:{
+    type:String
+}
+,
 
-
-institution:[{
+groupm:[{
     type:mongoose.Schema.Types.ObjectId,
     ref:"institutetable"}
 ],

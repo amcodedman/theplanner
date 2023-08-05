@@ -22,34 +22,21 @@ const {
 
 routers.route("/preregister").post(async (req, res) => {
   try {
-    const { firstname, lastname, email, age, password, username, phone } =
-      req.body;
+    const { fullname, email, password,username } = req.body;
     const check_user = await User.findOne({ email: email });
-    const usern = await User.findOne({ username: username });
-
-    if (check_user || usern) {
-      if (check_user && usern) {
-        res.status(400).json({
-          msg: "email and username used already!!",
-        });
-      }
-      if (check_user && !usern) {
+    if (check_user) {
+      if (check_user) {
         res.status(400).json({
           msg: "email used already!!",
         });
       }
-      if (usern && !check_user) {
-        res.status(400).json({
-          msg: "user name used already!!",
-        });
-      }
     } else if (!check_user) {
       const signtoken = jwt.sign(
-        { firstname, lastname, email, age, password, username },
+        { fullname, email, password },
         process.env.ACCOUNT_ACTIVATION,
         { expiresIn: "1d" }
       );
-      await RegisterUser(firstname, email, signtoken);
+      await RegisterUser(fullname, email, signtoken);
       res.status(200).json({ msg: email });
     }
   } catch (error) {
@@ -60,35 +47,27 @@ routers.route("/preregister").post(async (req, res) => {
 
 routers.route("/authenticateme").post(async (req, res) => {
   try {
-    const { firstname, lastname, email, password, username } = jwt.verify(
+    const { fullname, email, password,username } = jwt.verify(
       req.body.t,
       process.env.ACCOUNT_ACTIVATION
     );
 
     const check_user = await User.findOne({ email: email });
-    const check_username = await User.findOne({ username: username });
 
-    if (check_username || check_user) {
-      if (check_user) {
-        res.status(400).json({
-          msg: "email verified or registered already!!",
-        });
-      } else {
-        res.status(400).json({
-          msg: "username taken!!",
-        });
-      }
-    } else if (!check_user && !check_username) {
+    if (check_user) {
+      res.status(400).json({
+        msg: "email verified or registered already!!",
+      });
+    } else if (!check_user) {
       const user = new User({
-        firstname,
-        lastname,
+        fullname,
+        username,
         email,
         password,
-        username,
       });
 
       const save_user = await user.save();
-      const name = save_user.username + " Timeline";
+      const name = save_user.username + "Personal Routine";
 
       const data = new timeNModel({
         user: save_user._id,
@@ -104,17 +83,6 @@ routers.route("/authenticateme").post(async (req, res) => {
         },
         { new: true, useFindAndModify: false }
       );
-      const randomNumber = Math.floor(Math.random() * (1000 - 100 + 1)) + 100;
-      const supportcareid = save_user.lastname + `${randomNumber}`;
-      await User.findByIdAndUpdate(
-        { _id: save_user._id },
-        {
-          $set: {
-            parentcare: supportcareid,
-          },
-        },
-        { new: true }
-      );
 
       const dataI = new InstituteModel({
         user: save_user._id,
@@ -125,7 +93,7 @@ routers.route("/authenticateme").post(async (req, res) => {
         { _id: save_user._id },
         {
           $push: {
-            institution: tableI._id,
+            groupm: tableI._id,
           },
         },
         { new: true, useFindAndModify: false }
@@ -177,9 +145,7 @@ routers.route("/authenticateme").post(async (req, res) => {
         }
       });
 
-      const token = user.generate_token();
-
-      res.cookie("x-auth", token).json(save_user);
+      res.status(200).json(save_user);
     }
   } catch (error) {
     res.status(400).json({ msg: error });
@@ -288,25 +254,6 @@ routers.route("/profile").get(Checkuser, async (req, res) => {
   }
 });
 
-////////////////////////////////// delete user
-
-routers.route("/deluser/:id").delete(async (req, res) => {
-  try {
-    const _id = req.params.id;
-    const user = await User.findByIdAndDelete(_id);
-
-    if (user) {
-      await Contactmail(
-        user.email,
-        "sorry, you violated our terms and condition.Your account has been retracted"
-      );
-    }
-    res.status(200).json({ user });
-  } catch (error) {
-    res.status(400).json({ msg: error });
-  }
-});
-
 routers.route("/userresetpass/:id").patch(async (req, res) => {
   try {
     const _id = req.params.id;
@@ -340,106 +287,40 @@ routers.route("/userresetpass/:id").patch(async (req, res) => {
   }
 });
 
-
 routers.route("/invitefriend").post(async (req, res) => {
   try {
     const from = req.body.from;
     const to = req.body.to;
-   const data=new InviteModel({
-    ...req.body
-   });
+    const data = new InviteModel({
+      ...req.body,
+    });
 
-
-
-const saveinvite=   await data.save();
-    res.status(200).json({ msg: "success" ,data:saveinvite});
+    const saveinvite = await data.save();
+    res.status(200).json({ msg: "success", data: saveinvite });
   } catch (error) {
     res.status(400).json({ msg: "error", error: error });
   }
 });
 
-
-
-
-routers.route("/getinvitetome/:id").get(async(req,res)=>{
-
-  try{
-
-    const result=await InviteModel.find({to:req.params.id})
-    res.status(200).json(result)
-
+routers.route("/getinvitetome/:id").get(async (req, res) => {
+  try {
+    const result = await InviteModel.find({ to: req.params.id });
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(400).json({ msg: error });
   }
+});
 
-  catch(error) {
-res.status(400).json({msg:error})
-}})
-
-
-
-routers.route("/getinvitee/:id").get(async(req,res)=>{
-
-  try{
-
-    const result=await InviteModel.find({from:req.params.id})
-    res.status(200).json(result)
-
+routers.route("/getinvitee/:id").get(async (req, res) => {
+  try {
+    const result = await InviteModel.find({ from: req.params.id });
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(400).json({ msg: error });
   }
+});
 
-  catch(error) {
-res.status(400).json({msg:error})
-}})
-
-
-
-
-
-routers.route("/comfirminvite/:id").get(async(req,res)=>{
-
-  try{
-
-    const result=await InviteModel.findOneAndUpdate({
-    _id: req.params.id
-
-    },{
-      $set:{
-        comfirm:true
-      }
-    },{new:true})
-    res.status(200).json(result)
-
-  }
-
-  catch(error) {
-res.status(400).json({msg:error})
-}})
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-routers.route("/addfriend").patch(async (req, res) => {
+routers.route("/comfirminvite/:id").get(async (req, res) => {
   try {
     const from = req.body.from;
     const to = req.body.to;
@@ -461,17 +342,34 @@ routers.route("/addfriend").patch(async (req, res) => {
       }
     );
 
+    await User.findByIdAndUpdate(
+      { _id: to },
+      {
+        $push: {
+          friends: userfriend,
+        },
+      },
+      { new: true, useFindAndModify: true }
+    );
 
-    await User.findByIdAndUpdate({_id :to},{
-      $push:{
-        friends:userfriend
-      }
-    },{new:true,useFindAndModify: true})
-    res.status(200).json({ msg: "success" });
+    const result = await InviteModel.findOneAndUpdate(
+      {
+        _id: req.params.id,
+      },
+      {
+        $set: {
+          comfirm: true,
+        },
+      },
+      { new: true }
+    );
+    res.status(200).json(result);
   } catch (error) {
-    res.status(400).json({ msg: "error", error: error });
+    res.status(400).json({ msg: error });
   }
 });
+
+
 
 routers.route("/userforgotpass").post(async (req, res) => {
   try {
@@ -506,7 +404,7 @@ routers.route("/getuser/:id").get(async (req, res) => {
     const data = await User.find({ _id: _id })
 
       .populate({
-        path: "institution",
+        path: "groupm",
         populate: { path: "days", populate: { path: "shedules" } },
       })
       .populate("task")
@@ -514,7 +412,8 @@ routers.route("/getuser/:id").get(async (req, res) => {
         path: "timetable",
         populate: { path: "days", populate: { path: "shedules" } },
       })
-      .populate("messages");
+      .populate("messages")
+      .populate("friends")
     res.status(200).json(data);
   } catch (error) {
     res.status(400).json({ msg: error });

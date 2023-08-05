@@ -15,10 +15,11 @@ const Transporter = nodemailer.createTransport({
 
 const RegisterUser = async (user, userEmail, token) => {
   try {
+  
     const MAILGEN = new mailgen({
       theme: "default",
       product: {
-        name: "TimeNudge",
+        name: "myplanner",
         link: `${process.env.SITE_DOMAIN}`,
       },
     });
@@ -26,7 +27,7 @@ const RegisterUser = async (user, userEmail, token) => {
     const emailbody = {
       body: {
         name: user,
-        intro: "Welcome to TimeNudge We're very excited to have you here.",
+        intro: "Welcome to myplanner We're very excited to have you here.",
         action: {
           instructions: "Please click below to verify your account and Enjoy",
           button: {
@@ -59,7 +60,7 @@ const ResetPass = async (email_user, token) => {
     let mailG = new mailgen({
       theme: "default",
       product: {
-        name: "TimeNudge",
+        name: "myplanner",
         link: `${process.env.EMAIL_MAIN_URL}`,
       },
     });
@@ -131,7 +132,7 @@ const sendmail = async (contact) => {
     let mailG = new Mailgen({
       theme: "default",
       product: {
-        name: "TimeNudge",
+        name: "myplanner",
         link: `${process.env.EMAIL_MAIN_URL}`,
       },
     });
@@ -140,8 +141,8 @@ const sendmail = async (contact) => {
       body: {
         intro: [
           `Email:${contact.email}`,
-          `firstname:${contact.firstname}`,
-          `lastname:${contact.lastname}`,
+          `firstname:${contact.fullname}`,
+        ,
         ],
         outro: [`${contact.message}`],
       },
