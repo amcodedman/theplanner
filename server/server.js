@@ -9,7 +9,6 @@ const path = require("path");
 var cors = require("cors");
 const MongoUrl = `mongodb+srv://myplannercommunity:${process.env.DB_PASS}@newplann.4qaxial.mongodb.net/?retryWrites=true&w=majority`;
 const Admin = require("./routers/Admin");
-
 const users = require("./routers/users");
 const geo = require("./routers/geo");
 const database = require("./routers/databa");

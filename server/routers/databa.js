@@ -35,6 +35,7 @@ routes.route("/createregularshedule").post(async (req, res) => {
 routes.route("/createinstituteshedule").post(async (req, res) => {
   try {
     const day = req.body.day;
+    const user=req.body.user;
     const data = new ISheduleModel({
       ...req.body,
     });
@@ -49,11 +50,69 @@ routes.route("/createinstituteshedule").post(async (req, res) => {
       },
       { new: true, useFindAndModify: true }
     );
+
+
+
+    await ISheduleModel.findByIdAndUpdate(
+      { _id: content._id},
+      {
+        $push: {
+          group: user
+        },
+      },
+      { new: true, useFindAndModify: true }
+    );
     res.status(200).json(content);
   } catch (error) {
     res.status(400).json({ msg: error });
   }
 });
+
+
+
+routes.route("/sharegroup/:id").patch(async (req, res) => {
+  try {
+    const user= req.body.user;
+    await ISheduleModel.findByIdAndUpdate(
+      { _id: req.params.id },
+      {
+        $push: {
+          group: user,
+        },
+      },
+      { new: true,useFindAndModify: true}
+    );
+
+    res.status(200).json(content);
+  } catch (error) {
+    res.status(400).json({ msg: error });
+  }
+});
+
+
+
+
+routes.route("/sharetask/:id").patch(async (req, res) => {
+  try {
+    const user= req.body.user;
+    await OneTimeS.findByIdAndUpdate(
+      { _id: req.params.id },
+      {
+        $push: {
+          group: user,
+        },
+      },
+      { new: true,useFindAndModify: true}
+    );
+
+    res.status(200).json(content);
+  } catch (error) {
+    res.status(400).json({ msg: error });
+  }
+});
+
+
+
 
 routes.route("/createtask").post(async (req, res) => {
   try {
@@ -72,6 +131,18 @@ routes.route("/createtask").post(async (req, res) => {
       },
       { new: true,useFindAndModify: true}
     );
+
+
+    await OneTimeS.findByIdAndUpdate(
+      { _id: content._id },
+      {
+        $push: {
+          group: user,
+        },
+      },
+      { new: true,useFindAndModify: true}
+    );
+
     res.status(200).json(content);
   } catch (error) {
     res.status(400).json({ msg: error });

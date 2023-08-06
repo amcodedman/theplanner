@@ -66,6 +66,9 @@ const shedule_schema = mongoose.Schema(
       type: Number,
       default: 0,
     },
+    description: {
+      type: String,
+    },
     complete: {
       type: Number,
       default: 0,
@@ -162,6 +165,13 @@ const Ishedule_schema = mongoose.Schema(
       type: Number,
       default: 0,
     },
+    description: {
+      type: String,
+    },
+    group:[{
+      type:mongoose.Schema.Types.ObjectId,
+      ref:"user"
+    }]
   },
   { timestamps: true }
 );
