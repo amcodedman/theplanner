@@ -153,7 +153,7 @@ routers.route("/authenticateme").post(async (req, res) => {
   }
 });
 //////////////////////////////////////// get users
-routers.route("/alluser").post(async (req, res) => {
+routers.route("/alluser").get(async (req, res) => {
   try {
     const allusers = await User.find({}).sort({ createdAt: "desc" });
 
