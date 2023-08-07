@@ -32,7 +32,7 @@ routers.route("/preregister").post(async (req, res) => {
       }
     } else if (!check_user) {
       const signtoken = jwt.sign(
-        { fullname, email, password },
+        { fullname, email, password,username },
         process.env.ACCOUNT_ACTIVATION,
         { expiresIn: "1d" }
       );
