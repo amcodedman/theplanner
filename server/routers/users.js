@@ -369,7 +369,7 @@ routers.route("/comfirminvite").post(async (req, res) => {
       },
       {
         $set: {
-          comfirm: true,
+          confirm: true,
         },
       },
       { new: true }
