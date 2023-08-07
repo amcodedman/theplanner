@@ -330,10 +330,11 @@ routers.route("/getinvitee/:id").get(async (req, res) => {
   }
 });
 
-routers.route("/comfirminvite/:id").get(async (req, res) => {
+routers.route("/comfirminvite").post(async (req, res) => {
   try {
     const from = req.body.from;
     const to = req.body.to;
+    const invite=req.body.invite
     const userfriend = await User.findById({ _id: from });
     const userto = await User.findById({ _id: to });
 
@@ -364,7 +365,7 @@ routers.route("/comfirminvite/:id").get(async (req, res) => {
 
     const result = await InviteModel.findOneAndUpdate(
       {
-        _id: req.params.id,
+        _id: invite,
       },
       {
         $set: {
