@@ -311,6 +311,16 @@ routers.route("/getinvitetome/:id").get(async (req, res) => {
   }
 });
 
+routers.route("/getinvites").get(async (req, res) => {
+  try {
+    const result = await InviteModel.find();
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(400).json({ msg: error });
+  }
+});
+
+
 routers.route("/getinvitee/:id").get(async (req, res) => {
   try {
     const result = await InviteModel.find({ from: req.params.id });
