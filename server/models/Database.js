@@ -168,17 +168,19 @@ const Ishedule_schema = mongoose.Schema(
     description: {
       type: String,
     },
-    group:[{
-      type:mongoose.Schema.Types.ObjectId,
-      ref:"user"
-    }]
+    group: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "user",
+      },
+    ],
   },
   { timestamps: true }
 );
 
 const messageSchema = mongoose.Schema(
   {
-    user: {
+    from: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "users",
     },
@@ -192,7 +194,7 @@ const messageSchema = mongoose.Schema(
 
 const InviteSchema = mongoose.Schema(
   {
-    user: {
+    from: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "users",
     },
