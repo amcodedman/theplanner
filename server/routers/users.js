@@ -330,11 +330,22 @@ routers.route("/getinvitee/:id").get(async (req, res) => {
   }
 });
 
+
+
+routers.route("/deleteinvite/:id").delete(async (req, res) => {
+  try {
+    const result = await InviteModel.findByIdAndDelete({ from: req.params.id });
+    res.status(200)
+  } catch (error) {
+    res.status(400).json({ msg: error });
+  }
+});
 routers.route("/comfirminvite").post(async (req, res) => {
   try {
     const from = req.body.from;
     const to = req.body.to;
     const invite=req.body.invite
+    
     const userfriend = await User.findById({ _id: from });
     const userto = await User.findById({ _id: to });
 
