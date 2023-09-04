@@ -335,7 +335,7 @@ routers.route("/getinvitee/:id").get(async (req, res) => {
 routers.route("/deleteinvite/:id").delete(async (req, res) => {
   try {
     const result = await InviteModel.findByIdAndDelete({ _id: req.params.id });
-    res.status(200)
+    res.status(200).json({msg:"request canceled"})
   } catch (error) {
     res.status(400).json({ msg: error });
   }
