@@ -318,7 +318,7 @@ routers.route("/getfriends/:id").get(async (req, res) => {
   try {
 
     const result = await User.find({ _id: req.params.id }).populate("friends");
-    console.log({users:result})
+   
     res.status(200).json(result);
 
   } catch (error) {
